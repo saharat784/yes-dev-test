@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Luma Skin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen">
+  <nav class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-6">
+      <span class="font-bold text-lg text-indigo-600">Luma Skin</span>
+      <a href="/dashboard" class="text-sm font-semibold text-indigo-600">ภาพรวม & สถิติสแกน</a>
+      <a href="/products" class="text-sm font-medium text-slate-600 hover:text-indigo-600">จัดการสินค้า & Import</a>
+      {% if user.role == 'super_admin' %}
+      <a href="/users" class="text-sm font-medium text-slate-600 hover:text-indigo-600">จัดการผู้ดูแลระบบ</a>
+      {% endif %}
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-xs px-2.5 py-1 rounded-full font-medium
+        {% if user.role == 'super_admin' %}bg-purple-100 text-purple-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+        {{ user.role }}
+      </span>
+      <span class="text-sm text-slate-600">{{ user.email }}</span>
+      <a href="/logout" class="text-sm text-red-600 hover:underline">ออกจากระบบ</a>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto p-6 space-y-6">
+    <!-- การ์ดสรุปตัวเลข -->
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+        <p class="text-xs font-medium text-slate-500">สินค้าทั้งหมดในระบบ</p>
+        <p class="text-3xl font-bold text-slate-800 mt-2">{{ total_products }}</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+        <p class="text-xs font-medium text-slate-500">พร้อมแสดงผล (Active)</p>
+        <p class="text-3xl font-bold text-emerald-600 mt-2">{{ active_products }}</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+        <p class="text-xs font-medium text-slate-500">ยังไม่มีรูปภาพสินค้า</p>
+        <p class="text-3xl font-bold text-amber-600 mt-2">{{ missing_images }}</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-indigo-200 bg-indigo-50/30 p-5">
+        <p class="text-xs font-medium text-indigo-600">ยอดสแกน QR Code สะสม</p>
+        <p class="text-3xl font-bold text-indigo-700 mt-2">{{ total_scans }} <span class="text-sm font-normal">ครั้ง</span></p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- อันดับสินค้าที่ถูกสแกนมากที่สุด -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+          <h2 class="text-base font-bold text-slate-800">สินค้าที่ถูกสแกนดูมากที่สุด (Top Viewed)</h2>
+        </div>
+        <div class="divide-y divide-slate-100">
+          {% for item in top_scanned %}
+          <div class="px-5 py-3.5 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold flex items-center justify-center shrink-0">
+                {{ loop.index }}
+              </span>
+              <div class="truncate">
+                <p class="text-sm font-semibold text-slate-800 truncate">{{ item.name }}</p>
+                <p class="text-xs text-slate-400 font-mono">{{ item.sku }} • {{ item.category or 'ไม่ระบุหมวดหมู่' }}</p>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <span class="text-sm font-bold text-indigo-600">{{ item.scan_count }}</span>
+              <span class="text-xs text-slate-400">ครั้ง</span>
+            </div>
+          </div>
+          {% else %}
+          <div class="p-8 text-center text-sm text-slate-400">
+            ยังไม่มีประวัติการสแกน QR Code
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- ประวัติการสแกนล่าสุด -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100">
+          <h2 class="text-base font-bold text-slate-800">ประวัติการสแกนล่าสุด (Recent Scans)</h2>
+        </div>
+        <div class="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+          {% for log in recent_scans %}
+          <div class="px-5 py-3 text-xs flex items-center justify-between gap-3">
+            <div class="min-w-0">
+              <span class="font-mono font-semibold text-indigo-600">{{ log.sku }}</span>
+              <span class="text-slate-700 font-medium ml-1">{{ log.name }}</span>
+            </div>
+            <span class="text-slate-400 font-mono shrink-0">{{ log.scanned_at }}</span>
+          </div>
+          {% else %}
+          <div class="p-8 text-center text-sm text-slate-400">
+            ยังไม่มีรายการบันทึกการสแกน
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

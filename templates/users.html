@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>จัดการผู้ดูแลระบบ — Luma Skin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen">
+  <nav class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-6">
+      <span class="font-bold text-lg text-indigo-600">Luma Skin</span>
+      <a href="/dashboard" class="text-sm font-medium text-slate-600 hover:text-indigo-600">ภาพรวม & สถิติสแกน</a>
+      <a href="/products" class="text-sm font-medium text-slate-600 hover:text-indigo-600">จัดการสินค้า & Import</a>
+      <a href="/users" class="text-sm font-semibold text-indigo-600">จัดการผู้ดูแลระบบ</a>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-xs px-2.5 py-1 rounded-full font-medium bg-purple-100 text-purple-700">{{ user.role }}</span>
+      <span class="text-sm text-slate-600">{{ user.email }}</span>
+      <a href="/logout" class="text-sm text-red-600 hover:underline">ออกจากระบบ</a>
+    </div>
+  </nav>
+
+  <main class="max-w-5xl mx-auto p-6 space-y-6">
+    <!-- ฟอร์มเชิญ Admin ใหม่ -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <h1 class="text-lg font-bold text-slate-800">เชิญผู้ดูแลระบบใหม่ (Invite Admin)</h1>
+      <p class="text-xs text-slate-500 mt-1">
+        สร้างลิงก์เชิญเฉพาะบุคคลเพื่อให้ Admin ใหม่ตั้งรหัสผ่านเข้าใช้งาน (บันทึกประวัติลงไฟล์ <code class="bg-slate-100 px-1 rounded">invite_logs.log</code>)
+      </p>
+
+      {% if error %}
+      <div class="mt-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3.5">{{ error }}</div>
+      {% endif %}
+
+      {% if success %}
+      <div class="mt-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm rounded-lg p-4 space-y-2">
+        <p class="font-medium">{{ success }}</p>
+        {% if invite_link %}
+        <div class="flex items-center gap-2 bg-white border border-emerald-200 rounded-lg p-2">
+          <input type="text" readonly value="{{ invite_link }}" class="w-full text-xs font-mono text-slate-700 focus:outline-none" />
+          <a href="{{ invite_link }}" target="_blank" class="px-3 py-1.5 text-xs font-medium bg-emerald-600 text-white rounded shrink-0">
+            เปิดลิงก์ &nearr;
+          </a>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <form method="POST" action="/users/invite" class="mt-4 grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <input type="email" name="email" required placeholder="new.admin@lumaskin.com"
+          class="sm:col-span-2 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        <select name="role" class="px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white">
+          <option value="admin">Admin (จัดการสินค้าและ QR)</option>
+          <option value="super_admin">Super Admin (สิทธิ์เต็ม)</option>
+        </select>
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 rounded-lg transition">
+          สร้างคำเชิญ
+        </button>
+      </form>
+    </div>
+
+    <!-- ตารางรายชื่อผู้ดูแลระบบ -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-100">
+        <h2 class="text-base font-bold text-slate-800">รายชื่อผู้ดูแลระบบทั้งหมด</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase">
+            <tr>
+              <th class="px-6 py-3">อีเมล</th>
+              <th class="px-6 py-3">สิทธิ์ (Role)</th>
+              <th class="px-6 py-3">สถานะ</th>
+              <th class="px-6 py-3">วันที่สร้าง</th>
+              <th class="px-6 py-3 text-right">ลิงก์คำเชิญ</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {% for u in users %}
+            <tr>
+              <td class="px-6 py-3.5 font-medium text-slate-800">{{ u.email }}</td>
+              <td class="px-6 py-3.5">
+                <span class="text-xs px-2.5 py-0.5 rounded-full font-medium
+                  {% if u.role == 'super_admin' %}bg-purple-100 text-purple-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                  {{ u.role }}
+                </span>
+              </td>
+              <td class="px-6 py-3.5">
+                {% if u.status == 'active' %}
+                <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-medium">active</span>
+                {% else %}
+                <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium">invited</span>
+                {% endif %}
+              </td>
+              <td class="px-6 py-3.5 text-xs text-slate-500 font-mono">{{ u.created_at }}</td>
+              <td class="px-6 py-3.5 text-right">
+                {% if u.status == 'invited' and u.invite_token %}
+                <a href="/accept-invite?token={{ u.invite_token }}" target="_blank"
+                  class="text-xs text-indigo-600 hover:underline font-medium">
+                  เปิดหน้าตั้งรหัสผ่าน &nearr;
+                </a>
+                {% else %}
+                <span class="text-xs text-slate-400">-</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

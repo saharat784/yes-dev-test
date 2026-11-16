@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    {% if state == 'active' %}{{ product.name }} — Luma Skin{% else %}ข้อมูลสินค้า — Luma Skin{% endif %}
+  </title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-stone-100 min-h-screen flex flex-col justify-between text-slate-800">
+  <!-- Header แบรนด์ -->
+  <header class="bg-white/90 backdrop-blur border-b border-stone-200 sticky top-0 z-10">
+    <div class="max-w-md mx-auto px-4 py-3.5 flex items-center justify-between">
+      <span class="font-bold tracking-wider text-base text-slate-900 uppercase">Luma Skin</span>
+      <span class="text-xs font-mono text-slate-400">{{ sku }}</span>
+    </div>
+  </header>
+
+  <main class="max-w-md w-full mx-auto px-4 py-6 flex-1">
+    {% if state == 'active' %}
+    <!-- กรณีสินค้าพร้อมจำหน่าย (ACTIVE) -->
+    <article class="bg-white rounded-3xl shadow-sm border border-stone-200/80 overflow-hidden">
+      <!-- รูปภาพสินค้า -->
+      <div class="aspect-square bg-stone-50 relative overflow-hidden">
+        {% if product.image_path %}
+        <img src="{{ product.image_path }}" alt="{{ product.name }}" class="w-full h-full object-cover" />
+        {% else %}
+        <div class="w-full h-full flex flex-col items-center justify-center text-stone-400 p-6 text-center">
+          <span class="text-sm font-medium">Luma Skin Official Product</span>
+          <span class="text-xs mt-1">{{ product.sku }}</span>
+        </div>
+        {% endif %}
+
+        {% if product.category %}
+        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-slate-700 text-xs font-medium px-3 py-1 rounded-full shadow-sm">
+          {{ product.category }}
+        </span>
+        {% endif %}
+      </div>
+
+      <!-- รายละเอียดสินค้า -->
+      <div class="p-6 space-y-5">
+        <div>
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-mono font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded">
+              {{ product.sku }}
+            </span>
+            {% if product.size %}
+            <span class="text-xs text-slate-500">ปริมาณสุทธิ: {{ product.size }}</span>
+            {% endif %}
+          </div>
+          <h1 class="text-xl font-bold text-slate-900 mt-2.5 leading-snug">{{ product.name }}</h1>
+          <p class="text-2xl font-bold text-indigo-600 mt-2">
+            ฿{{ "{:,.2f}".format(product.price) }}
+          </p>
+        </div>
+
+        {% if product.description %}
+        <div class="pt-4 border-t border-stone-100">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">รายละเอียดสินค้า</h2>
+          <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{{ product.description }}</p>
+        </div>
+        {% endif %}
+
+        {% if product.how_to_use %}
+        <div class="pt-4 border-t border-stone-100">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">วิธีใช้ (How to Use)</h2>
+          <div class="bg-stone-50 rounded-2xl p-4 text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+            {{ product.how_to_use }}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </article>
+
+    {% elif state == 'inactive' %}
+    <!-- กรณีสินค้าปิดการแสดงผล (INACTIVE) -->
+    <div class="bg-white rounded-3xl shadow-sm border border-stone-200 p-8 text-center my-8 space-y-3">
+      <div class="w-14 h-14 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto text-xl font-bold">
+        !
+      </div>
+      <span class="inline-block text-xs font-mono text-slate-400">{{ product.sku }}</span>
+      <h1 class="text-lg font-bold text-slate-800">สินค้านี้ยังไม่พร้อมจำหน่ายในขณะนี้</h1>
+      <p class="text-sm text-slate-500 leading-relaxed">
+        ขออภัย ข้อมูลรายละเอียดของ <strong>{{ product.name }}</strong> ถูกระงับการแสดงผลชั่วคราว กรุณาติดต่อเจ้าหน้าที่หากต้องการสอบถามเพิ่มเติม
+      </p>
+    </div>
+
+    {% else %}
+    <!-- กรณีไม่พบรหัสสินค้า (NOT FOUND) -->
+    <div class="bg-white rounded-3xl shadow-sm border border-stone-200 p-8 text-center my-8 space-y-3">
+      <div class="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto text-xl font-bold">
+        ?
+      </div>
+      <span class="inline-block text-xs font-mono text-slate-400">{{ sku }}</span>
+      <h1 class="text-lg font-bold text-slate-800">ไม่พบข้อมูลสินค้า</h1>
+      <p class="text-sm text-slate-500 leading-relaxed">
+        ไม่พบรหัสสินค้านี้ในระบบของ Luma Skin กรุณาตรวจสอบ QR Code บนบรรจุภัณฑ์อีกครั้ง
+      </p>
+    </div>
+    {% endif %}
+  </main>
+
+  <footer class="py-5 text-center text-xs text-slate-400">
+    &copy; Luma Skin Official Product Verification
+  </footer>
+</body>
+</html>
