@@ -21,7 +21,7 @@
 
 ใช้ฐานข้อมูล **SQLite** โดยแยกโครงสร้างตารางไว้ในไฟล์ `schema.sql` ดังนี้:
 
-    - **Table: `users`** (เก็บข้อมูลผู้ดูแลระบบ)
+- **Table: `users`** (เก็บข้อมูลผู้ดูแลระบบ)
   - `id`: INTEGER (PK, Auto-increment)
   - `email`: TEXT (NOT NULL, UNIQUE)
   - `password_hash`: TEXT (NOT NULL)
