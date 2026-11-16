@@ -53,17 +53,17 @@
 
 ## 3. Task Sequence & Time Estimation (รวม 4 ชั่วโมง 30 นาที)
 
-- **Phase 1: วางแผนและออกแบบระบบ (`PLAN.md`) — 30 นาที (0:00 - 0:30)**
+- **Phase 1: วางแผนและออกแบบระบบ (`PLAN.md`) **
   - วิเคราะห์ข้อมูลจากไฟล์ Excel ตัวอย่าง วางโครงสร้างฐานข้อมูล จัดลำดับความสำคัญ และ Push `PLAN.md` ขึ้น GitHub
-- **Phase 2: Setup, Database & Authentication — 45 นาที (0:30 - 1:15)**
+- **Phase 2: Setup, Database & Authentication **
   - สร้าง Environment, ไฟล์ `schema.sql`, ระบบเชื่อมต่อ SQLite, Seed บัญชี Super Admin และระบบ Login + แยกสิทธิ์ Role
-- **Phase 3: Core Product Management & Excel Import — 60 นาที (1:15 - 2:15)**
+- **Phase 3: Core Product Management & Excel Import **
   - สร้างระบบนำเข้าไฟล์ `.xlsx` (Validation + Upsert + รายงาน Error รายแถว), หน้าจัดการรายการสินค้า, แก้ไขข้อมูล และอัปโหลดรูปภาพพร้อมตรวจเงื่อนไข
-- **Phase 4: QR Code Generation & Public Product Page — 50 นาที (2:15 - 3:05)**
+- **Phase 4: QR Code Generation & Public Product Page **
   - สร้าง QR Code ผูกกับ `/p/{sku}` และพัฒนาหน้าแสดงข้อมูลสินค้าสาธารณะที่รองรับมือถือและสถานะ `inactive`
-- **Phase 5: Scan Analytics, QR Customization & Invite Admin — 55 นาที (3:05 - 4:00)**
+- **Phase 5: Scan Analytics, QR Customization & Invite Admin **
   - เพิ่มระบบเก็บ `scan_logs` พร้อมสรุปสินค้าที่ถูกดูมากที่สุด, ปรับสี/ขนาด QR Code และระบบเชิญ Admin ใหม่ (บันทึก Log)
-- **Phase 6: End-to-End Testing & Documentation (`README.md`) — 30 นาที (4:00 - 4:30)**
+- **Phase 6: End-to-End Testing & Documentation (`README.md`) **
   - ทดสอบนำเข้าไฟล์ทั้ง 2 รอบ, ทดสอบเงื่อนไขรูปภาพ, เขียน `README.md` ตามหัวข้อที่กำหนด และ Push ส่งงานก่อนหมดเวลา 5 นาที
 
 ---
